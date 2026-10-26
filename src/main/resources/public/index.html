@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c28">
+  <title>Juniper House | Hotel booking</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18332e;
+      --muted: #70817b;
+      --green: #276454;
+      --line: #e6ebe7;
+      --paper: #f7f8f4;
+      --white: #fff;
+      --gold: #c59a5b;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .topbar { align-items: center; background: #102c28; color: white; display: flex; justify-content: space-between; padding: 18px max(6vw, 24px); }
+    .brand { font-family: Georgia, serif; font-size: 22px; letter-spacing: .04em; }
+    .brand span { color: #d6b982; }
+    .nav { color: #d2dfd9; font-size: 14px; }
+    .hero { background: linear-gradient(90deg, rgba(12, 39, 34, .88), rgba(12, 39, 34, .28)), linear-gradient(135deg, #35594b, #b28e67); color: white; min-height: 310px; padding: 64px max(8vw, 24px); }
+    .eyebrow { color: #e5c892; font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { font-family: Georgia, serif; font-size: clamp(38px, 5vw, 60px); font-weight: 400; margin: 14px 0; max-width: 560px; }
+    .hero p { color: #e1e9e4; line-height: 1.6; max-width: 470px; }
+    main { margin: -35px auto 60px; max-width: 1100px; padding: 0 22px; position: relative; }
+    .panel { background: white; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 42px #153b2a12; padding: 24px; }
+    .search-grid { align-items: end; display: grid; gap: 16px; grid-template-columns: 1fr 1fr auto; }
+    label { color: #52655e; display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+    input { background: white; border: 1px solid #dce4de; border-radius: 7px; color: var(--ink); min-height: 44px; padding: 10px 12px; width: 100%; }
+    input:focus { border-color: var(--green); outline: 3px solid #27645422; }
+    .primary { background: var(--green); border: 0; border-radius: 7px; color: white; font-weight: 650; min-height: 44px; padding: 0 22px; transition: background .15s; }
+    .primary:hover { background: #1d5042; }
+    .section-heading { align-items: end; display: flex; justify-content: space-between; margin: 38px 0 17px; }
+    h2 { font-family: Georgia, serif; font-size: 28px; font-weight: 400; margin: 0; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .rooms { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .room-card { background: white; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    .room-art { align-items: end; background: linear-gradient(135deg, #d9e2d7, #8da495); display: flex; height: 125px; padding: 16px; }
+    .room-card:nth-child(2) .room-art { background: linear-gradient(135deg, #e5d8c4, #aa8a69); }
+    .room-card:nth-child(3) .room-art { background: linear-gradient(135deg, #d6ddd6, #627b70); }
+    .room-card:nth-child(4) .room-art { background: linear-gradient(135deg, #e4dfd1, #b5a17d); }
+    .room-art span { background: #ffffffd9; border-radius: 20px; color: var(--green); font-size: 11px; font-weight: 700; padding: 6px 10px; }
+    .room-info { padding: 18px; }
+    .room-title { align-items: start; display: flex; justify-content: space-between; }
+    h3 { font-family: Georgia, serif; font-size: 21px; font-weight: 400; margin: 0; }
+    .price { color: var(--green); font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .price small { color: var(--muted); font-size: 11px; font-weight: 400; }
+    .room-meta { color: var(--muted); font-size: 13px; margin: 8px 0 17px; }
+    .room-bottom { align-items: center; border-top: 1px solid var(--line); display: flex; justify-content: space-between; padding-top: 14px; }
+    .available { color: #287553; font-size: 12px; font-weight: 650; }
+    .unavailable { color: #a64a40; font-size: 12px; font-weight: 650; }
+    .small-button { background: transparent; border: 1px solid var(--green); border-radius: 6px; color: var(--green); font-size: 12px; font-weight: 650; padding: 8px 12px; }
+    .small-button:disabled { border-color: #cbd4ce; color: #929e97; cursor: not-allowed; }
+    .bookings { margin-top: 42px; }
+    .booking-search { align-items: end; display: grid; gap: 12px; grid-template-columns: 1fr auto; margin-top: 18px; max-width: 530px; }
+    .booking-list { display: grid; gap: 10px; margin-top: 18px; }
+    .booking-row { align-items: center; background: white; border: 1px solid var(--line); border-radius: 8px; display: flex; gap: 18px; justify-content: space-between; padding: 16px; }
+    .booking-row strong { display: block; margin-bottom: 5px; }
+    .booking-row p { color: var(--muted); font-size: 13px; margin: 0; }
+    .cancel { background: transparent; border: 1px solid #d8a49e; border-radius: 6px; color: #9f443b; font-size: 12px; padding: 8px 11px; }
+    .message { color: var(--muted); font-size: 14px; margin: 15px 0 0; min-height: 20px; }
+    .error { color: #a33f36; }
+    .success { color: #287553; }
+    footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; padding: 22px; text-align: center; }
+    @media (max-width: 700px) {
+      .search-grid, .rooms { grid-template-columns: 1fr; }
+      .hero { min-height: 275px; padding-top: 50px; }
+      main { margin-top: -24px; }
+      .booking-row { align-items: start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">JUNIPER <span>HOUSE</span></div>
+    <div class="nav">A thoughtful stay, beautifully made</div>
+  </header>
+  <section class="hero">
+    <div class="eyebrow">Your stay, your way</div>
+    <h1>A little room to feel at home.</h1>
+    <p>Find a calm, comfortable space for your next getaway. Choose your dates to see rooms available for your stay.</p>
+  </section>
+  <main>
+    <section class="panel" aria-label="Search room availability">
+      <form id="search-form" class="search-grid">
+        <div><label for="check-in">CHECK IN</label><input id="check-in" name="checkIn" type="date" required></div>
+        <div><label for="check-out">CHECK OUT</label><input id="check-out" name="checkOut" type="date" required></div>
+        <button class="primary" type="submit">Check availability</button>
+      </form>
+      <p class="message" id="room-message" role="status"></p>
+    </section>
+    <div class="section-heading">
+      <div><div class="eyebrow">Make yourself at home</div><h2>Rooms & suites</h2></div>
+      <div class="muted">A stay with room to breathe</div>
+    </div>
+    <section class="rooms" id="rooms" aria-live="polite"></section>
+    <section class="bookings">
+      <div class="eyebrow">Manage your stay</div>
+      <h2>Find or cancel a booking</h2>
+      <p class="muted">Enter the email address used when you made your reservation.</p>
+      <form id="booking-search" class="booking-search">
+        <div><label for="lookup-email">EMAIL ADDRESS</label><input id="lookup-email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+        <button class="primary" type="submit">Find bookings</button>
+      </form>
+      <p class="message" id="booking-message" role="status"></p>
+      <div class="booking-list" id="booking-list"></div>
+    </section>
+  </main>
+  <footer>Juniper House · Room reservations made simple</footer>
+  <script>
+    const form = document.querySelector("#search-form");
+    const checkIn = document.querySelector("#check-in");
+    const checkOut = document.querySelector("#check-out");
+    const rooms = document.querySelector("#rooms");
+    const roomMessage = document.querySelector("#room-message");
+    const bookingMessage = document.querySelector("#booking-message");
+    const bookingList = document.querySelector("#booking-list");
+    const today = new Date();
+    const dateString = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const dayAfter = new Date(today);
+    dayAfter.setDate(today.getDate() + 2);
+    checkIn.min = dateString(today);
+    checkIn.value = dateString(tomorrow);
+    checkOut.min = dateString(tomorrow);
+    checkOut.value = dateString(dayAfter);
+
+    function showMessage(element, text, kind = "") {
+      element.textContent = text;
+      element.className = `message ${kind}`;
+    }
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || "Something went wrong.");
+      return payload;
+    }
+
+    function renderRooms(items) {
+      rooms.replaceChildren();
+      for (const room of items) {
+        const card = document.createElement("article");
+        card.className = "room-card";
+        card.innerHTML = `<div class="room-art"><span>${room.type}</span></div>
+          <div class="room-info"><div class="room-title"><h3></h3><div class="price">$${room.pricePerNight}<small> / night</small></div></div>
+          <div class="room-meta">Room ${room.id} · Up to ${room.capacity} guests</div>
+          <div class="room-bottom"><span class="${room.available ? "available" : "unavailable"}">${room.available ? "Available for your dates" : "Unavailable for your dates"}</span>
+          <button class="small-button" type="button" ${room.available ? "" : "disabled"}>Book room</button></div></div>`;
+        card.querySelector("h3").textContent = room.name;
+        if (room.available) card.querySelector("button").addEventListener("click", () => bookRoom(room));
+        rooms.append(card);
+      }
+    }
+
+    async function loadRooms() {
+      showMessage(roomMessage, "Checking rooms…");
+      try {
+        const query = new URLSearchParams({ checkIn: checkIn.value, checkOut: checkOut.value });
+        const result = await request(`/api/rooms?${query}`);
+        renderRooms(result.rooms);
+        showMessage(roomMessage, `${result.rooms.filter(room => room.available).length} rooms available for your selected dates.`);
+      } catch (error) {
+        showMessage(roomMessage, error.message, "error");
+      }
+    }
+
+    async function bookRoom(room) {
+      const name = window.prompt("Guest name:");
+      if (name === null) return;
+      const email = window.prompt("Email address for your booking:");
+      if (email === null) return;
+      try {
+        const result = await request("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ name, email, roomId: room.id, checkIn: checkIn.value, checkOut: checkOut.value })
+        });
+        window.alert(`Booking confirmed. Your reference is ${result.booking.id}`);
+        await loadRooms();
+      } catch (error) {
+        window.alert(error.message);
+        await loadRooms();
+      }
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      if (checkOut.value <= checkIn.value) {
+        showMessage(roomMessage, "Check-out must be after check-in.", "error");
+        return;
+      }
+      loadRooms();
+    });
+    checkIn.addEventListener("change", () => {
+      checkOut.min = checkIn.value;
+      if (checkOut.value <= checkIn.value) {
+        const nextDay = new Date(`${checkIn.value}T00:00:00`);
+        nextDay.setDate(nextDay.getDate() + 1);
+        checkOut.value = dateString(nextDay);
+      }
+    });
+
+    document.querySelector("#booking-search").addEventListener("submit", async event => {
+      event.preventDefault();
+      const email = document.querySelector("#lookup-email").value.trim();
+      bookingList.replaceChildren();
+      showMessage(bookingMessage, "Looking up your bookings…");
+      try {
+        const result = await request(`/api/bookings?${new URLSearchParams({ email })}`);
+        if (result.bookings.length === 0) {
+          showMessage(bookingMessage, "No bookings found for that email address.");
+          return;
+        }
+        showMessage(bookingMessage, `${result.bookings.length} booking${result.bookings.length === 1 ? "" : "s"} found.`);
+        for (const booking of result.bookings) {
+          const row = document.createElement("article");
+          row.className = "booking-row";
+          row.innerHTML = "<div><strong></strong><p></p><p></p></div><button class=\"cancel\" type=\"button\">Cancel booking</button>";
+          row.querySelector("strong").textContent = `${booking.roomName} · ${booking.checkIn} to ${booking.checkOut}`;
+          row.querySelectorAll("p")[0].textContent = `${booking.name} · Reference ${booking.id}`;
+          row.querySelectorAll("p")[1].textContent = `Room ${booking.roomId}`;
+          row.querySelector("button").addEventListener("click", () => cancelBooking(booking.id, email, row));
+          bookingList.append(row);
+        }
+      } catch (error) {
+        showMessage(bookingMessage, error.message, "error");
+      }
+    });
+
+    async function cancelBooking(id, email, row) {
+      if (!window.confirm("Cancel this booking? This action cannot be undone.")) return;
+      try {
+        await request(`/api/bookings/${encodeURIComponent(id)}/cancel`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ email })
+        });
+        row.remove();
+        showMessage(bookingMessage, "Your booking has been cancelled.", "success");
+        await loadRooms();
+      } catch (error) {
+        showMessage(bookingMessage, error.message, "error");
+      }
+    }
+
+    loadRooms();
+  </script>
+</body>
+</html>
