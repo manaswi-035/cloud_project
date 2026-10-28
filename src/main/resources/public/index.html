@@ -3,117 +3,206 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#102c28">
-  <title>Juniper House | Hotel booking</title>
+  <meta name="theme-color" content="#183c3b">
+  <title>Juniper House | A colorful hotel stay</title>
   <style>
     :root {
       color-scheme: light;
-      --ink: #18332e;
-      --muted: #70817b;
-      --green: #276454;
-      --line: #e6ebe7;
-      --paper: #f7f8f4;
+      --ink: #24153f;
+      --muted: #574b66;
+      --green: #087f68;
+      --line: #d8cde8;
+      --paper: #fff8e9;
       --white: #fff;
-      --gold: #c59a5b;
+      --gold: #d89a3d;
+      --coral: #ed806a;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: var(--paper); color: var(--ink); }
+    body { margin: 0; background: radial-gradient(ellipse at 8% 33%, #ffcdb8 0, transparent 25rem), radial-gradient(ellipse at 94% 53%, #d8c7ff 0, transparent 30rem), #fff7e6; color: var(--ink); }
     button, input { font: inherit; }
     button { cursor: pointer; }
-    .topbar { align-items: center; background: #102c28; color: white; display: flex; justify-content: space-between; padding: 18px max(6vw, 24px); }
-    .brand { font-family: Georgia, serif; font-size: 22px; letter-spacing: .04em; }
-    .brand span { color: #d6b982; }
-    .nav { color: #d2dfd9; font-size: 14px; }
-    .hero { background: linear-gradient(90deg, rgba(12, 39, 34, .88), rgba(12, 39, 34, .28)), linear-gradient(135deg, #35594b, #b28e67); color: white; min-height: 310px; padding: 64px max(8vw, 24px); }
-    .eyebrow { color: #e5c892; font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
-    h1 { font-family: Georgia, serif; font-size: clamp(38px, 5vw, 60px); font-weight: 400; margin: 14px 0; max-width: 560px; }
-    .hero p { color: #e1e9e4; line-height: 1.6; max-width: 470px; }
-    main { margin: -35px auto 60px; max-width: 1100px; padding: 0 22px; position: relative; }
-    .panel { background: white; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 14px 42px #153b2a12; padding: 24px; }
-    .search-grid { align-items: end; display: grid; gap: 16px; grid-template-columns: 1fr 1fr auto; }
-    label { color: #52655e; display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-    input { background: white; border: 1px solid #dce4de; border-radius: 7px; color: var(--ink); min-height: 44px; padding: 10px 12px; width: 100%; }
-    input:focus { border-color: var(--green); outline: 3px solid #27645422; }
-    .primary { background: var(--green); border: 0; border-radius: 7px; color: white; font-weight: 650; min-height: 44px; padding: 0 22px; transition: background .15s; }
-    .primary:hover { background: #1d5042; }
-    .section-heading { align-items: end; display: flex; justify-content: space-between; margin: 38px 0 17px; }
-    h2 { font-family: Georgia, serif; font-size: 28px; font-weight: 400; margin: 0; }
+    button:focus-visible { outline: 3px solid #d89a3d99; outline-offset: 3px; }
+    .topbar { align-items: center; background: #251443; color: white; display: flex; justify-content: space-between; padding: 17px max(6vw, 24px); }
+    .brand { align-items: center; display: flex; font-family: Georgia, serif; font-size: 21px; gap: 10px; letter-spacing: .05em; }
+    .brand-mark { align-items: center; background: var(--gold); border-radius: 50% 50% 8px 50%; color: #183c3b; display: inline-flex; font-family: Georgia, serif; height: 34px; justify-content: center; transform: rotate(-8deg); width: 34px; }
+    .brand span:last-child { color: #f3c777; }
+    .nav { color: #d4e3dc; font-size: 13px; }
+    .hero { background: radial-gradient(circle at 82% 10%, #ffe45d 0 3%, transparent 3.2%), radial-gradient(ellipse at 92% 115%, #ff795e 0 28%, transparent 28.2%), linear-gradient(112deg, #35135f 0%, #7043ba 48%, #087f79 100%); color: white; min-height: 350px; overflow: hidden; padding: 62px max(8vw, 24px); position: relative; }
+    .hero:after { border: 1px solid #ffffff26; border-radius: 50%; content: ""; height: 420px; position: absolute; right: 5%; top: -160px; width: 420px; }
+    .eyebrow { color: #af3d20; font-size: 11px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; }
+    .hero .eyebrow { color: #ffe45d; }
+    h1 { font-family: Georgia, serif; font-size: clamp(40px, 5vw, 64px); font-weight: 400; letter-spacing: -.025em; line-height: 1.03; margin: 14px 0; max-width: 590px; }
+    .hero p { color: #e0efdf; line-height: 1.7; max-width: 475px; }
+    .hero-note { background: #ffffff18; border: 1px solid #ffffff36; border-radius: 30px; display: inline-block; font-size: 12px; margin-top: 7px; padding: 9px 14px; }
+    main { margin: -34px auto 60px; max-width: 1120px; padding: 0 22px; position: relative; z-index: 1; }
+    .panel { background: linear-gradient(125deg, #fffefa, #fff0d0); border: 2px solid #efc85e; border-radius: 20px; box-shadow: 0 18px 42px #4a257a20; padding: 25px; }
+    .search-grid { align-items: end; display: grid; gap: 14px; grid-template-columns: 1fr 1fr 1fr auto; }
+    .filter-grid { border-top: 2px dashed #e3c86c; display: grid; gap: 13px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 17px; padding-top: 16px; }
+    select { background: #fff; border: 2px solid #bca8dc; border-radius: 10px; color: var(--ink); min-height: 44px; padding: 9px 11px; width: 100%; }
+    label { color: #49336d; display: block; font-size: 11px; font-weight: 900; letter-spacing: .07em; margin-bottom: 8px; }
+    input { background: #fff; border: 2px solid #bca8dc; border-radius: 10px; color: var(--ink); min-height: 46px; padding: 10px 12px; width: 100%; }
+    input:focus, select:focus { border-color: #7043ba; outline: 4px solid #7043ba33; }
+    .primary { background: linear-gradient(115deg, #087f68, #06a67c); border: 0; border-radius: 10px; box-shadow: 0 5px 0 #075f52; color: white; font-weight: 800; min-height: 46px; padding: 0 22px; transition: box-shadow .15s, filter .15s, transform .15s; }
+    .primary:hover { box-shadow: 0 2px 0 #075f52; filter: saturate(1.3) brightness(1.08); transform: translateY(2px); }
+    .primary:active { box-shadow: none; transform: translateY(5px); }
+    .category-pills { display: flex; flex-wrap: wrap; gap: 9px; margin: 17px 0 0; }
+    .category-pill { background: #fff; border: 2px solid #cdbde4; border-radius: 30px; color: #49336d; font-size: 12px; font-weight: 800; padding: 9px 15px; transition: background .16s, color .16s, transform .16s; }
+    .category-pill:hover { background: #f2e9ff; transform: translateY(-2px); }
+    .category-pill[aria-pressed="true"] { background: #452078; border-color: #452078; box-shadow: 0 4px 0 #2f1553; color: white; }
+    .section-heading { align-items: end; display: flex; justify-content: space-between; margin: 42px 0 18px; }
+    h2 { font-family: Georgia, serif; font-size: 30px; font-weight: 400; letter-spacing: -.02em; margin: 5px 0 0; }
     .muted { color: var(--muted); font-size: 14px; }
-    .rooms { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .room-card { background: white; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-    .room-art { align-items: end; background: linear-gradient(135deg, #d9e2d7, #8da495); display: flex; height: 125px; padding: 16px; }
-    .room-card:nth-child(2) .room-art { background: linear-gradient(135deg, #e5d8c4, #aa8a69); }
-    .room-card:nth-child(3) .room-art { background: linear-gradient(135deg, #d6ddd6, #627b70); }
-    .room-card:nth-child(4) .room-art { background: linear-gradient(135deg, #e4dfd1, #b5a17d); }
-    .room-art span { background: #ffffffd9; border-radius: 20px; color: var(--green); font-size: 11px; font-weight: 700; padding: 6px 10px; }
-    .room-info { padding: 18px; }
-    .room-title { align-items: start; display: flex; justify-content: space-between; }
-    h3 { font-family: Georgia, serif; font-size: 21px; font-weight: 400; margin: 0; }
-    .price { color: var(--green); font-size: 15px; font-weight: 700; white-space: nowrap; }
-    .price small { color: var(--muted); font-size: 11px; font-weight: 400; }
-    .room-meta { color: var(--muted); font-size: 13px; margin: 8px 0 17px; }
+    .rooms { display: grid; gap: 22px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .room-card { background: white; border: 2px solid #e1d7ed; border-radius: 18px; box-shadow: 0 8px 24px #3b205315; overflow: hidden; transition: border-color .2s, box-shadow .2s, transform .2s; }
+    .room-card:hover { border-color: #8058cb; box-shadow: 0 18px 36px #3b20532e; transform: translateY(-5px); }
+    .room-art { height: 235px; overflow: hidden; position: relative; }
+    .room-art-image, .room-art svg { display: block; height: 100%; width: 100%; }
+    .room-art span { background: #29134af2; border: 1px solid #ffffff77; border-radius: 20px; bottom: 14px; color: #fff; font-size: 10px; font-weight: 900; left: 15px; letter-spacing: .1em; padding: 8px 12px; position: absolute; text-transform: uppercase; }
+    .room-info { background: linear-gradient(150deg, #fff 65%, var(--room-tint, #fff0d0)); padding: 19px; }
+    .room-card-standard { --room-tint: #ffe2d6; --room-accent: #e85742; }
+    .room-card-deluxe { --room-tint: #d9f3f1; --room-accent: #07869a; }
+    .room-card-suite { --room-tint: #e8dcff; --room-accent: #7043ba; }
+    .room-card-family { --room-tint: #fff0bf; --room-accent: #b45b12; }
+    .gallery-thumbs { display: flex; gap: 7px; margin: -3px 0 14px; }
+    .gallery-thumb { align-items: center; background: #fff; border: 1px solid #ded4ed; border-radius: 8px; color: #574b66; display: flex; flex: 1; font-size: 10px; font-weight: 700; gap: 6px; justify-content: center; min-height: 34px; padding: 5px; transition: background .15s, color .15s, transform .15s; }
+    .gallery-thumb:hover { background: #f2e9ff; transform: translateY(-1px); }
+    .gallery-thumb[aria-pressed="true"] { background: var(--room-accent, #7043ba); border-color: var(--room-accent, #7043ba); color: white; }
+    .thumb-icon { background: #e4d5bd; border-radius: 4px; display: inline-block; height: 16px; width: 20px; }
+    .room-title { align-items: start; display: flex; gap: 12px; justify-content: space-between; }
+    h3 { font-family: Georgia, serif; font-size: 23px; font-weight: 400; margin: 0; }
+    .price { color: var(--room-accent, var(--green)); font-size: 16px; font-weight: 900; white-space: nowrap; }
+    .price small { color: var(--muted); font-size: 11px; font-weight: 500; }
+    .room-meta { color: var(--muted); font-size: 13px; margin: 9px 0 18px; }
+    .amenities { display: flex; flex-wrap: wrap; gap: 6px; margin: -8px 0 15px; }
+    .amenity { background: var(--room-tint, #e5f4ea); border-radius: 20px; color: #33204d; font-size: 10px; font-weight: 800; padding: 6px 9px; }
     .room-bottom { align-items: center; border-top: 1px solid var(--line); display: flex; justify-content: space-between; padding-top: 14px; }
-    .available { color: #287553; font-size: 12px; font-weight: 650; }
-    .unavailable { color: #a64a40; font-size: 12px; font-weight: 650; }
-    .small-button { background: transparent; border: 1px solid var(--green); border-radius: 6px; color: var(--green); font-size: 12px; font-weight: 650; padding: 8px 12px; }
+    .available { color: #267653; font-size: 12px; font-weight: 750; }
+    .unavailable { color: #a64a40; font-size: 12px; font-weight: 750; }
+    .small-button { background: var(--room-accent, #087f68); border: 0; border-radius: 9px; box-shadow: 0 3px 0 #24153f33; color: white; font-size: 12px; font-weight: 850; padding: 10px 14px; transition: filter .15s, transform .15s; }
+    .small-button:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-2px); }
     .small-button:disabled { border-color: #cbd4ce; color: #929e97; cursor: not-allowed; }
-    .bookings { margin-top: 42px; }
+    .bookings { background: linear-gradient(130deg, #e4d7ff, #c6f1e6 68%, #ffe29c); border: 2px solid #b9a0e6; border-radius: 20px; box-shadow: 0 14px 30px #3b205318; margin-top: 46px; padding: 25px; }
     .booking-search { align-items: end; display: grid; gap: 12px; grid-template-columns: 1fr auto; margin-top: 18px; max-width: 530px; }
     .booking-list { display: grid; gap: 10px; margin-top: 18px; }
-    .booking-row { align-items: center; background: white; border: 1px solid var(--line); border-radius: 8px; display: flex; gap: 18px; justify-content: space-between; padding: 16px; }
-    .booking-row strong { display: block; margin-bottom: 5px; }
-    .booking-row p { color: var(--muted); font-size: 13px; margin: 0; }
-    .cancel { background: transparent; border: 1px solid #d8a49e; border-radius: 6px; color: #9f443b; font-size: 12px; padding: 8px 11px; }
+    .booking-row { align-items: start; background: #fffefa; border: 2px solid #ba9be7; border-radius: 14px; box-shadow: 0 6px 16px #3b205312; display: flex; gap: 18px; justify-content: space-between; padding: 17px; }
+    .booking-row strong { display: block; font-family: Georgia, serif; font-size: 19px; font-weight: 400; margin-bottom: 7px; }
+    .booking-row p { color: var(--muted); font-size: 13px; margin: 4px 0; }
+    .booking-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .extend { background: #e8f4f0; border: 1px solid #a7cfc3; border-radius: 7px; color: #155c54; font-size: 12px; font-weight: 700; padding: 8px 11px; }
+    .receipt { background: #fff9eb; border: 1px solid #ead59e; border-radius: 7px; color: #745b25; font-size: 12px; font-weight: 700; padding: 8px 11px; }
+    .cancel { background: #fff6f3; border: 1px solid #e6b3a8; border-radius: 7px; color: #9f443b; font-size: 12px; font-weight: 700; padding: 8px 11px; }
+    .extension-cost { color: var(--green); display: block; font-size: 11px; font-weight: 700; margin-top: 5px; }
     .message { color: var(--muted); font-size: 14px; margin: 15px 0 0; min-height: 20px; }
     .error { color: #a33f36; }
     .success { color: #287553; }
-    footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; padding: 22px; text-align: center; }
+    .demo-note { background: #fff3d9; border: 1px solid #f0dba9; border-radius: 9px; color: #70552a; font-size: 12px; line-height: 1.5; margin-top: 15px; padding: 11px 13px; }
+    dialog { border: 0; border-radius: 18px; box-shadow: 0 24px 80px #102b2a66; color: var(--ink); max-height: 90vh; max-width: 500px; padding: 0; width: calc(100% - 30px); }
+    dialog::backdrop { background: #102b2ab8; backdrop-filter: blur(3px); }
+    .dialog-content { padding: 25px; }
+    .dialog-head { align-items: start; display: flex; justify-content: space-between; }
+    .dialog-close { background: transparent; border: 0; color: var(--muted); font-size: 24px; line-height: 1; }
+    .payment-summary { background: linear-gradient(120deg, #eff7ef, #fff1da); border-radius: 12px; margin: 17px 0; padding: 15px; }
+    .payment-total { color: var(--green); font-family: Georgia, serif; font-size: 28px; margin-top: 4px; }
+    .payment-visual { align-items: center; display: flex; gap: 16px; margin: 18px 0; }
+    .qr-grid { background: white; border: 1px solid #e5e4dc; border-radius: 8px; display: grid; flex: 0 0 112px; gap: 2px; grid-template-columns: repeat(11, 1fr); padding: 8px; }
+    .qr-cell { aspect-ratio: 1; background: transparent; }
+    .qr-cell.on { background: #183c3b; }
+    .payment-caption { color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .dialog-actions { display: flex; gap: 10px; justify-content: end; margin-top: 18px; }
+    .secondary { background: white; border: 1px solid #dddcd1; border-radius: 9px; color: var(--ink); font-weight: 650; min-height: 44px; padding: 0 16px; }
+    .inline-form { align-items: end; display: grid; gap: 10px; grid-template-columns: 1fr auto; margin-top: 12px; }
+    footer { background: #183c3b; color: #d4e3dc; font-size: 12px; padding: 23px; text-align: center; }
     @media (max-width: 700px) {
-      .search-grid, .rooms { grid-template-columns: 1fr; }
-      .hero { min-height: 275px; padding-top: 50px; }
+      .search-grid, .filter-grid, .rooms { grid-template-columns: 1fr; }
+      .hero { min-height: 310px; padding-top: 50px; }
       main { margin-top: -24px; }
-      .booking-row { align-items: start; }
+      .section-heading { align-items: start; flex-direction: column; gap: 9px; }
+      .booking-row { flex-direction: column; }
+      .booking-actions { width: 100%; }
+      .booking-actions button { flex: 1; }
+      .bookings { padding: 19px; }
+      .payment-visual { align-items: start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">JUNIPER <span>HOUSE</span></div>
+    <div class="brand"><span class="brand-mark">J</span> JUNIPER <span>HOUSE</span></div>
     <div class="nav">A thoughtful stay, beautifully made</div>
   </header>
   <section class="hero">
-    <div class="eyebrow">Your stay, your way</div>
-    <h1>A little room to feel at home.</h1>
-    <p>Find a calm, comfortable space for your next getaway. Choose your dates to see rooms available for your stay.</p>
+    <div class="eyebrow">A little escape, a lot of comfort</div>
+    <h1>Come for the view.<br>Stay for the feeling.</h1>
+    <p>Colorful rooms, garden mornings and little details that make a getaway feel like yours. Find your favorite corner of Juniper House.</p>
+    <div class="hero-note">✦ &nbsp;Your next lovely stay starts here</div>
   </section>
   <main>
     <section class="panel" aria-label="Search room availability">
       <form id="search-form" class="search-grid">
         <div><label for="check-in">CHECK IN</label><input id="check-in" name="checkIn" type="date" required></div>
         <div><label for="check-out">CHECK OUT</label><input id="check-out" name="checkOut" type="date" required></div>
-        <button class="primary" type="submit">Check availability</button>
+        <div><label for="guest-count">GUESTS</label><select id="guest-count"><option value="1">1 guest</option><option value="2" selected>2 guests</option><option value="3">3 guests</option><option value="4">4 guests</option><option value="5">5 guests</option><option value="6">6 guests</option></select></div>
+        <button class="primary" type="submit">Find my room&nbsp; →</button>
       </form>
+      <div class="filter-grid" aria-label="Room filters">
+        <div><label for="room-type">ROOM STYLE</label><select id="room-type"><option value="">All room styles</option><option>Standard</option><option>Deluxe</option><option>Suite</option><option>Family</option></select></div>
+        <div><label for="max-price">MAXIMUM PRICE PER NIGHT</label><select id="max-price"><option value="">Any price</option><option value="150">Up to $150</option><option value="200">Up to $200</option><option value="300">Up to $300</option></select></div>
+        <div><label for="facility">MUST-HAVE AMENITY</label><select id="facility"><option value="">Any amenity</option><option value="Garden view">Garden view</option><option value="City view">City view</option><option value="Balcony">Balcony</option><option value="Family lounge">Family lounge</option><option value="Twin beds">Twin beds</option><option value="Wi-Fi">Wi-Fi</option></select></div>
+      </div>
+      <div class="category-pills" aria-label="Quick room category filters">
+        <button class="category-pill" type="button" data-room-type="" aria-pressed="true">All rooms · 24</button>
+        <button class="category-pill" type="button" data-room-type="Standard" aria-pressed="false">Standard · 6</button>
+        <button class="category-pill" type="button" data-room-type="Deluxe" aria-pressed="false">Deluxe · 6</button>
+        <button class="category-pill" type="button" data-room-type="Suite" aria-pressed="false">Suites · 6</button>
+        <button class="category-pill" type="button" data-room-type="Family" aria-pressed="false">Family · 6</button>
+      </div>
       <p class="message" id="room-message" role="status"></p>
     </section>
     <div class="section-heading">
-      <div><div class="eyebrow">Make yourself at home</div><h2>Rooms & suites</h2></div>
-      <div class="muted">A stay with room to breathe</div>
+      <div><div class="eyebrow">A room for every kind of getaway</div><h2>Find your happy place</h2></div>
+      <div class="muted">24 colorful rooms · 6 in each category</div>
     </div>
     <section class="rooms" id="rooms" aria-live="polite"></section>
     <section class="bookings">
-      <div class="eyebrow">Manage your stay</div>
-      <h2>Find or cancel a booking</h2>
-      <p class="muted">Enter the email address used when you made your reservation.</p>
+      <div class="eyebrow">Your stay, in your hands</div>
+      <h2>Manage your reservation</h2>
+      <p class="muted">Look up a booking to extend your stay or cancel it. We’ll show the updated demo charges before you proceed.</p>
       <form id="booking-search" class="booking-search">
-        <div><label for="lookup-email">EMAIL ADDRESS</label><input id="lookup-email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
-        <button class="primary" type="submit">Find bookings</button>
+        <div><label for="lookup-email">BOOKING EMAIL</label><input id="lookup-email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+        <button class="primary" type="submit">Find my stay</button>
       </form>
       <p class="message" id="booking-message" role="status"></p>
       <div class="booking-list" id="booking-list"></div>
     </section>
   </main>
-  <footer>Juniper House · Room reservations made simple</footer>
+  <footer>Juniper House · Little moments, lovely stays</footer>
+  <dialog id="payment-dialog" aria-labelledby="payment-title">
+    <form id="payment-form" class="dialog-content">
+      <div class="dialog-head">
+        <div><div class="eyebrow">A lovely stay awaits</div><h2 id="payment-title">Reserve your room</h2></div>
+        <button class="dialog-close" type="button" aria-label="Close payment dialog">×</button>
+      </div>
+      <div class="payment-summary">
+        <div class="muted" id="payment-details"></div>
+        <div class="payment-total" id="payment-total"></div>
+      </div>
+      <div><label for="guest-name">GUEST NAME</label><input id="guest-name" name="name" maxlength="100" required autocomplete="name"></div>
+      <div style="margin-top:12px"><label for="guest-email">EMAIL FOR YOUR BOOKING</label><input id="guest-email" name="email" type="email" maxlength="254" required autocomplete="email"></div>
+      <div class="payment-visual">
+        <div class="qr-grid" id="demo-qr" role="img" aria-label="Decorative demo payment pattern, not a real QR code"></div>
+        <div class="payment-caption"><strong>DEMO PAYMENT ONLY</strong><br>This decorative pattern cannot be scanned. No real account is connected and no money will be moved.</div>
+      </div>
+      <p class="message" id="payment-message" role="status"></p>
+      <div class="dialog-actions">
+        <button class="secondary dialog-close" type="button">Not now</button>
+        <button class="primary" type="submit">Simulate demo payment</button>
+      </div>
+    </form>
+  </dialog>
   <script>
     const form = document.querySelector("#search-form");
     const checkIn = document.querySelector("#check-in");
@@ -122,6 +211,10 @@
     const roomMessage = document.querySelector("#room-message");
     const bookingMessage = document.querySelector("#booking-message");
     const bookingList = document.querySelector("#booking-list");
+    const paymentDialog = document.querySelector("#payment-dialog");
+    const paymentForm = document.querySelector("#payment-form");
+    let loadedRooms = [];
+    let selectedRoom;
     const today = new Date();
     const dateString = date => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     const tomorrow = new Date(today);
@@ -130,8 +223,52 @@
     dayAfter.setDate(today.getDate() + 2);
     checkIn.min = dateString(today);
     checkIn.value = dateString(tomorrow);
-    checkOut.min = dateString(tomorrow);
+    checkOut.min = dateString(dayAfter);
     checkOut.value = dateString(dayAfter);
+
+    const roomArt = {
+      "101": `<svg viewBox="0 0 640 320" role="img" aria-label="Illustration of a sunny garden room" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x2="0" y2="1"><stop stop-color="#f8d89a"/><stop offset="1" stop-color="#f4a17e"/></linearGradient></defs><rect width="640" height="320" fill="url(#g1)"/><circle cx="500" cy="65" r="36" fill="#fff3be"/><path d="M0 207Q110 142 230 208T470 198T640 205V320H0" fill="#89ad78"/><rect x="71" y="64" width="184" height="133" rx="5" fill="#fff6de"/><rect x="83" y="76" width="160" height="109" fill="#9dc6bb"/><path d="M163 76v109M83 131h160" stroke="#fff6de" stroke-width="8"/><path d="M0 278q100-120 200 0t200 0t240 0v42H0" fill="#557d57"/><rect x="275" y="185" width="218" height="90" rx="18" fill="#f7eee0"/><rect x="291" y="170" width="188" height="52" rx="18" fill="#fffaf0"/><path d="M275 270h220v18H275z" fill="#8a5f49"/><rect x="300" y="190" width="80" height="22" rx="10" fill="#db8c70"/><path d="M540 221q-13-60 4-101m-4 54q-37-36-44-6 27 28 44 13m-1-23q31-47 49-19-21 34-49 27" fill="#336c50" stroke="#336c50" stroke-width="8"/></svg>`,
+      "102": `<svg viewBox="0 0 640 320" role="img" aria-label="Illustration of a bright city-view room" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g2" x2="0" y2="1"><stop stop-color="#a6d9df"/><stop offset="1" stop-color="#f4b9a0"/></linearGradient></defs><rect width="640" height="320" fill="url(#g2)"/><circle cx="105" cy="65" r="30" fill="#ffe79a"/><rect x="355" y="52" width="211" height="151" rx="4" fill="#fff8e8"/><rect x="368" y="64" width="185" height="127" fill="#8bc4d0"/><path d="M368 145h185M460 64v127" stroke="#fff8e8" stroke-width="7"/><path d="M368 147l42-42 36 32 41-53 66 61v46H368" fill="#6e98a7"/><rect y="238" width="640" height="82" fill="#d8a17f"/><rect x="92" y="191" width="220" height="88" rx="18" fill="#f6e1cb"/><rect x="108" y="176" width="188" height="54" rx="17" fill="#fff3e2"/><rect x="122" y="195" width="71" height="24" rx="10" fill="#e99a83"/><path d="M81 278h245v14H81z" fill="#875f52"/><path d="M65 88v111m0-83-33 30m33-17 34 25" stroke="#367b73" stroke-width="8"/><circle cx="66" cy="79" r="31" fill="#559a78"/></svg>`,
+      "201": `<svg viewBox="0 0 640 320" role="img" aria-label="Illustration of a spacious family suite" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g3" x2="0" y2="1"><stop stop-color="#c7b0e1"/><stop offset="1" stop-color="#f4c1aa"/></linearGradient></defs><rect width="640" height="320" fill="url(#g3)"/><path d="M0 224h640v96H0z" fill="#c98e78"/><rect x="377" y="49" width="176" height="137" rx="5" fill="#fff5e5"/><rect x="389" y="61" width="152" height="113" fill="#99c9c1"/><path d="M465 61v113m-76-52h152" stroke="#fff5e5" stroke-width="7"/><path d="M404 150q35-57 69 0 32-39 68 0" fill="#638e77"/><rect x="104" y="174" width="282" height="106" rx="20" fill="#f5e9d8"/><rect x="119" y="157" width="250" height="60" rx="20" fill="#fff8ec"/><rect x="138" y="178" width="94" height="27" rx="12" fill="#db8d9a"/><rect x="249" y="178" width="94" height="27" rx="12" fill="#91b9a4"/><path d="M94 279h300v16H94z" fill="#78564d"/><path d="M42 226h45v54H42z" fill="#eeaa59"/><path d="M36 224q28-53 57 0" fill="#f7ce83"/></svg>`,
+      "202": `<svg viewBox="0 0 640 320" role="img" aria-label="Illustration of a twin room with warm colors" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g4" x2="0" y2="1"><stop stop-color="#a9c6a5"/><stop offset="1" stop-color="#f2cf8f"/></linearGradient></defs><rect width="640" height="320" fill="url(#g4)"/><circle cx="104" cy="67" r="32" fill="#fff1bd"/><rect x="407" y="51" width="151" height="141" fill="#fff6e1"/><rect x="418" y="62" width="129" height="119" fill="#9cc8ce"/><path d="M482 62v119m-64-56h129" stroke="#fff6e1" stroke-width="7"/><rect y="229" width="640" height="91" fill="#c99766"/><rect x="67" y="186" width="206" height="88" rx="17" fill="#f9e9d1"/><rect x="81" y="170" width="178" height="50" rx="17" fill="#fff9e9"/><rect x="95" y="189" width="71" height="24" rx="10" fill="#d88b75"/><path d="M58 273h221v15H58z" fill="#755443"/><rect x="306" y="186" width="206" height="88" rx="17" fill="#e6d8ef"/><rect x="320" y="170" width="178" height="50" rx="17" fill="#faf4ff"/><rect x="335" y="189" width="71" height="24" rx="10" fill="#8eb6a0"/><path d="M297 273h222v15H297z" fill="#755443"/></svg>`
+    };
+    const roomAmenities = {
+      "101": ["Garden view", "Wi-Fi", "King bed"],
+      "102": ["City view", "Wi-Fi", "Balcony"],
+      "201": ["Family lounge", "Wi-Fi", "Sofa bed"],
+      "202": ["Twin beds", "Wi-Fi", "Work desk"]
+    };
+    const galleryColors = {
+      "101": ["#f4dfb2", "#92b27e", "#d88e73"],
+      "102": ["#bbdce0", "#d7aa91", "#638e9a"],
+      "201": ["#d2c4e3", "#cc9f89", "#d9909b"],
+      "202": ["#d8e2c8", "#c89f71", "#8cb2a0"]
+    };
+    const artForType = { Standard: "101", Deluxe: "102", Suite: "201", Family: "201" };
+    const amenitiesForType = {
+      Standard: ["Garden view", "Wi-Fi", "King bed"],
+      Deluxe: ["City view", "Wi-Fi", "Balcony"],
+      Suite: ["Family lounge", "Wi-Fi", "Sofa bed"],
+      Family: ["Family lounge", "Wi-Fi", "Bunk beds"]
+    };
+
+    function roomArtFor(room) {
+      return roomArt[room.id] || roomArt[artForType[room.type]];
+    }
+
+    function roomAmenitiesFor(room) {
+      return roomAmenities[room.id] || amenitiesForType[room.type];
+    }
+
+    function galleryScene(roomId, view, roomType) {
+      const fallbackId = artForType[roomType] || "101";
+      if (view === "bedroom") return roomArt[roomId] || roomArt[fallbackId];
+      const [wall, floor, accent] = galleryColors[roomId] || galleryColors[fallbackId];
+      if (view === "window") {
+        return `<svg viewBox="0 0 640 320" role="img" aria-label="Illustrated room window view" xmlns="http://www.w3.org/2000/svg"><rect width="640" height="320" fill="${wall}"/><circle cx="116" cy="75" r="32" fill="#fff2b6"/><rect x="177" y="35" width="285" height="212" rx="8" fill="#fff8e8"/><rect x="192" y="50" width="255" height="182" fill="#a8d3cf"/><path d="M192 173q60-83 119-7t136-35v101H192" fill="${accent}"/><path d="M320 50v182M192 141h255" stroke="#fff8e8" stroke-width="10"/><rect y="260" width="640" height="60" fill="${floor}"/><path d="M500 261q-17-84 4-126m-4 66q-41-39-55-7 29 35 55 18m0-27q34-47 53-16-22 34-53 28" fill="#477458" stroke="#477458" stroke-width="8"/></svg>`;
+      }
+      return `<svg viewBox="0 0 640 320" role="img" aria-label="Illustrated lounge corner" xmlns="http://www.w3.org/2000/svg"><rect width="640" height="320" fill="${wall}"/><rect y="246" width="640" height="74" fill="${floor}"/><circle cx="501" cy="73" r="45" fill="#fff2d2"/><path d="M480 112v116m-32 0h64" stroke="#936c4f" stroke-width="9"/><path d="M103 168q0-28 27-28h130q27 0 27 28v68H103z" fill="${accent}"/><rect x="118" y="132" width="150" height="46" rx="19" fill="#fff5e6"/><path d="M92 230h207v18H92z" fill="#805c48"/><path d="M151 250v38m90-38v38" stroke="#805c48" stroke-width="9"/><ellipse cx="401" cy="230" rx="72" ry="16" fill="#fff0d4"/><path d="M346 234v32m110-32v32" stroke="#805c48" stroke-width="8"/><path d="M51 235q-11-91 5-139m-5 76q-35-37-49-4 25 34 49 17m0-32q28-48 47-17-18 36-47 30" fill="#477458" stroke="#477458" stroke-width="8"/></svg>`;
+    }
 
     function showMessage(element, text, kind = "") {
       element.textContent = text;
@@ -139,58 +276,120 @@
     }
 
     async function request(url, options) {
-      const response = await fetch(url, options);
+      let response;
+      try {
+        response = await fetch(url, options);
+      } catch (error) {
+        if (error instanceof TypeError) {
+          throw new Error("Can't reach the hotel server. Start the app, then refresh this page.");
+        }
+        throw error;
+      }
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || "Something went wrong.");
       return payload;
     }
 
+    function nightCount(start, end) {
+      return Math.round((new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`)) / 86400000);
+    }
+
+    function filteredRooms(items) {
+      const guests = Number(document.querySelector("#guest-count").value);
+      const roomType = document.querySelector("#room-type").value;
+      const maxPrice = Number(document.querySelector("#max-price").value) || Infinity;
+      const facility = document.querySelector("#facility").value;
+      return items.filter(room => room.capacity >= guests
+        && (!roomType || room.type === roomType)
+        && room.pricePerNight <= maxPrice
+        && (!facility || roomAmenitiesFor(room).includes(facility)));
+    }
+
     function renderRooms(items) {
       rooms.replaceChildren();
-      for (const room of items) {
+      const filtered = filteredRooms(items);
+      if (filtered.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = "No rooms match these filters. Try more guests, a higher price limit, or another amenity.";
+        rooms.append(empty);
+      }
+      for (const room of filtered) {
         const card = document.createElement("article");
-        card.className = "room-card";
-        card.innerHTML = `<div class="room-art"><span>${room.type}</span></div>
+        card.className = `room-card room-card-${room.type.toLowerCase()}`;
+        card.innerHTML = `<div class="room-art"><div class="room-art-image">${roomArtFor(room)}</div><span>${room.type} · Room ${room.id}</span></div>
           <div class="room-info"><div class="room-title"><h3></h3><div class="price">$${room.pricePerNight}<small> / night</small></div></div>
-          <div class="room-meta">Room ${room.id} · Up to ${room.capacity} guests</div>
-          <div class="room-bottom"><span class="${room.available ? "available" : "unavailable"}">${room.available ? "Available for your dates" : "Unavailable for your dates"}</span>
-          <button class="small-button" type="button" ${room.available ? "" : "disabled"}>Book room</button></div></div>`;
+          <div class="gallery-thumbs" aria-label="Room illustration gallery"><button class="gallery-thumb" type="button" data-view="bedroom" aria-pressed="true"><span class="thumb-icon"></span>Bedroom</button><button class="gallery-thumb" type="button" data-view="window" aria-pressed="false"><span class="thumb-icon"></span>Window</button><button class="gallery-thumb" type="button" data-view="lounge" aria-pressed="false"><span class="thumb-icon"></span>Lounge</button></div>
+          <div class="room-meta">Sleeps up to ${room.capacity} guests · ${room.type === "Family" ? "Room for the whole family" : room.id === "101" ? "Garden view" : room.id === "102" ? "City outlook" : room.id === "201" ? "Extra space for all" : "A cozy room to unwind"}</div>
+          <div class="amenities">${roomAmenitiesFor(room).map(item => `<span class="amenity">${item}</span>`).join("")}</div>
+          <div class="room-bottom"><span class="${room.available ? "available" : "unavailable"}">${room.available ? "✦ Available for your dates" : "Booked for these dates"}</span>
+          <button class="small-button" type="button" ${room.available ? "" : "disabled"}>Choose this room</button></div></div>`;
         card.querySelector("h3").textContent = room.name;
+        card.querySelectorAll(".gallery-thumb").forEach(button => button.addEventListener("click", () => {
+          card.querySelector(".room-art-image").innerHTML = galleryScene(room.id, button.dataset.view, room.type);
+          card.querySelectorAll(".gallery-thumb").forEach(thumb => thumb.setAttribute("aria-pressed", String(thumb === button)));
+        }));
         if (room.available) card.querySelector("button").addEventListener("click", () => bookRoom(room));
         rooms.append(card);
       }
     }
 
     async function loadRooms() {
-      showMessage(roomMessage, "Checking rooms…");
+      showMessage(roomMessage, "Checking availability for your dates…");
       try {
         const query = new URLSearchParams({ checkIn: checkIn.value, checkOut: checkOut.value });
         const result = await request(`/api/rooms?${query}`);
-        renderRooms(result.rooms);
-        showMessage(roomMessage, `${result.rooms.filter(room => room.available).length} rooms available for your selected dates.`);
+        loadedRooms = result.rooms;
+        renderRooms(loadedRooms);
+        const availableCount = filteredRooms(loadedRooms).filter(room => room.available).length;
+        showMessage(roomMessage, `${availableCount} room${availableCount === 1 ? "" : "s"} match your stay and filters.`);
       } catch (error) {
         showMessage(roomMessage, error.message, "error");
       }
     }
 
-    async function bookRoom(room) {
-      const name = window.prompt("Guest name:");
-      if (name === null) return;
-      const email = window.prompt("Email address for your booking:");
-      if (email === null) return;
+    function bookRoom(room) {
+      selectedRoom = room;
+      const nights = nightCount(checkIn.value, checkOut.value);
+      document.querySelector("#payment-details").textContent = `${room.name} · ${document.querySelector("#guest-count").value} guest(s) · ${nights} night${nights === 1 ? "" : "s"} · ${checkIn.value} to ${checkOut.value}`;
+      document.querySelector("#payment-total").textContent = `$${room.pricePerNight * nights} total`;
+      showMessage(document.querySelector("#payment-message"), "");
+      paymentDialog.showModal();
+    }
+
+    paymentForm.addEventListener("submit", async event => {
+      event.preventDefault();
+      if (!selectedRoom) return;
+      const submitButton = paymentForm.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      showMessage(document.querySelector("#payment-message"), "Recording your demo reservation…");
       try {
+        const values = new FormData(paymentForm);
         const result = await request("/api/bookings", {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ name, email, roomId: room.id, checkIn: checkIn.value, checkOut: checkOut.value })
+          body: new URLSearchParams({
+            name: values.get("name").trim(),
+            email: values.get("email").trim(),
+            roomId: selectedRoom.id,
+            guests: document.querySelector("#guest-count").value,
+            checkIn: checkIn.value,
+            checkOut: checkOut.value
+          })
         });
-        window.alert(`Booking confirmed. Your reference is ${result.booking.id}`);
+        paymentDialog.close();
+        showMessage(roomMessage, `Demo booking confirmed · $${result.booking.totalAmount} simulated debit · Reference ${result.booking.id.slice(0, 8)}. No money moved.`, "success");
+        document.querySelector("#lookup-email").value = values.get("email").trim();
+        document.querySelector("#booking-search").requestSubmit();
         await loadRooms();
       } catch (error) {
-        window.alert(error.message);
-        await loadRooms();
+        showMessage(document.querySelector("#payment-message"), error.message, "error");
+      } finally {
+        submitButton.disabled = false;
       }
-    }
+    });
+
+    document.querySelectorAll(".dialog-close").forEach(button => button.addEventListener("click", () => paymentDialog.close()));
 
     form.addEventListener("submit", event => {
       event.preventDefault();
@@ -213,45 +412,157 @@
       event.preventDefault();
       const email = document.querySelector("#lookup-email").value.trim();
       bookingList.replaceChildren();
-      showMessage(bookingMessage, "Looking up your bookings…");
+      showMessage(bookingMessage, "Looking up your reservation…");
       try {
         const result = await request(`/api/bookings?${new URLSearchParams({ email })}`);
         if (result.bookings.length === 0) {
           showMessage(bookingMessage, "No bookings found for that email address.");
           return;
         }
-        showMessage(bookingMessage, `${result.bookings.length} booking${result.bookings.length === 1 ? "" : "s"} found.`);
-        for (const booking of result.bookings) {
-          const row = document.createElement("article");
-          row.className = "booking-row";
-          row.innerHTML = "<div><strong></strong><p></p><p></p></div><button class=\"cancel\" type=\"button\">Cancel booking</button>";
-          row.querySelector("strong").textContent = `${booking.roomName} · ${booking.checkIn} to ${booking.checkOut}`;
-          row.querySelectorAll("p")[0].textContent = `${booking.name} · Reference ${booking.id}`;
-          row.querySelectorAll("p")[1].textContent = `Room ${booking.roomId}`;
-          row.querySelector("button").addEventListener("click", () => cancelBooking(booking.id, email, row));
-          bookingList.append(row);
-        }
+        showMessage(bookingMessage, `${result.bookings.length} lovely stay${result.bookings.length === 1 ? "" : "s"} found.`);
+        for (const booking of result.bookings) renderBooking(booking, email);
       } catch (error) {
         showMessage(bookingMessage, error.message, "error");
       }
     });
 
-    async function cancelBooking(id, email, row) {
-      if (!window.confirm("Cancel this booking? This action cannot be undone.")) return;
+    function renderBooking(booking, email) {
+      const row = document.createElement("article");
+      row.className = "booking-row";
+      row.innerHTML = `<div><strong></strong><p></p><p></p><form class="inline-form"><div><label>NEW CHECK-OUT</label><input type="date" required><small class="extension-cost"></small></div><button class="extend" type="submit">Review extension</button></form><p class="timeline"></p></div><div class="booking-actions"><button class="receipt" type="button">Download receipt</button><button class="cancel" type="button">Cancel · 50% refund</button></div>`;
+      row.querySelector("strong").textContent = `${booking.roomName} · ${booking.checkIn} to ${booking.checkOut}`;
+      row.querySelectorAll("p")[0].textContent = `${booking.name} · Reference ${booking.id.slice(0, 8)}`;
+      row.querySelectorAll("p")[1].textContent = `Room ${booking.roomId} · ${booking.guests} guest(s) · $${booking.pricePerNight}/night · $${booking.totalAmount} paid (demo) · ${booking.transactionId}`;
+      const daysToCheckIn = new Date(`${booking.checkIn}T00:00:00`) - new Date(`${dateString(new Date())}T00:00:00`);
+      const upcoming = daysToCheckIn >= 0 && daysToCheckIn <= 7 * 86400000;
+      row.querySelector(".timeline").textContent = `Booking confirmed → Demo payment recorded${upcoming ? " · Reminder: your check-in is coming up" : ""}`;
+      const dateInput = row.querySelector('input[type="date"]');
+      dateInput.min = booking.checkOut;
+      const suggestedCheckout = new Date(`${booking.checkOut}T00:00:00`);
+      suggestedCheckout.setDate(suggestedCheckout.getDate() + 1);
+      dateInput.value = dateString(suggestedCheckout);
+      const extensionCost = row.querySelector(".extension-cost");
+      const updateExtensionEstimate = () => {
+        const addedNights = Math.max(0, nightCount(booking.checkOut, dateInput.value));
+        extensionCost.textContent = addedNights > 0
+          ? `${addedNights} extra night(s) · $${addedNights * booking.pricePerNight} additional (demo)`
+          : "Choose a later date to see the additional cost.";
+      };
+      dateInput.addEventListener("change", updateExtensionEstimate);
+      updateExtensionEstimate();
+      row.querySelector(".inline-form").addEventListener("submit", event => {
+        event.preventDefault();
+        extendBooking(booking, email, dateInput.value, row);
+      });
+      row.querySelector(".receipt").addEventListener("click", () => downloadReceipt(booking));
+      row.querySelector(".cancel").addEventListener("click", () => cancelBooking(booking, email, row));
+      bookingList.append(row);
+    }
+
+    async function extendBooking(booking, email, newCheckOut, row) {
+      const addedNights = nightCount(booking.checkOut, newCheckOut);
+      if (addedNights <= 0) {
+        showMessage(bookingMessage, "Choose a later check-out date to extend your stay.", "error");
+        return;
+      }
+      const additionalAmount = addedNights * booking.pricePerNight;
+      if (!window.confirm(`Extend checkout from ${booking.checkOut} to ${newCheckOut}? Additional demo payment: $${additionalAmount}. Room availability will be checked. No real payment is taken.`)) return;
       try {
-        await request(`/api/bookings/${encodeURIComponent(id)}/cancel`, {
+        const result = await request(`/api/bookings/${encodeURIComponent(booking.id)}/extend`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({ email })
+          body: new URLSearchParams({ email, checkOut: newCheckOut })
         });
-        row.remove();
-        showMessage(bookingMessage, "Your booking has been cancelled.", "success");
+        row.replaceWith(renderBookingAfterExtension(result.booking, email));
+        showMessage(bookingMessage, `Stay extended through ${newCheckOut} · $${result.additionalAmount} additional demo payment simulated · Transaction ${result.booking.transactionId}. No money moved.`, "success");
         await loadRooms();
       } catch (error) {
         showMessage(bookingMessage, error.message, "error");
       }
     }
 
+    function renderBookingAfterExtension(booking, email) {
+      const previousList = bookingList;
+      renderBooking(booking, email);
+      const newRow = previousList.lastElementChild;
+      previousList.removeChild(newRow);
+      return newRow;
+    }
+
+    async function cancelBooking(booking, email, row) {
+      const cancellationFee = Math.ceil(booking.totalAmount / 2);
+      const refund = Math.floor(booking.totalAmount / 2);
+      if (!window.confirm(`Cancellation policy: 50% fee.\n\nBooking payment: $${booking.totalAmount}\nCancellation fee: $${cancellationFee}\nDemo refund: $${refund}\n\nConfirm cancellation? This is a simulation only; no money will be moved.`)) return;
+      try {
+        const result = await request(`/api/bookings/${encodeURIComponent(booking.id)}/cancel`, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ email })
+        });
+        row.remove();
+        showMessage(bookingMessage, `Booking cancelled · Fee $${result.cancellationFee} · $${result.refundedAmount} demo refund recorded (50% policy) · Refund status: Simulated · Reference ${result.refundTransactionId}. No money moved.`, "success");
+        await loadRooms();
+      } catch (error) {
+        showMessage(bookingMessage, error.message, "error");
+      }
+    }
+
+    function downloadReceipt(booking) {
+      const receipt = [
+        "JUNIPER HOUSE — DEMO BOOKING RECEIPT",
+        "DEMO ONLY — no real payment was taken.",
+        "",
+        `Booking reference: ${booking.id}`,
+        `Guest: ${booking.name}`,
+        `Room: ${booking.roomName} (${booking.roomId})`,
+        `Guests: ${booking.guests}`,
+        `Stay: ${booking.checkIn} to ${booking.checkOut}`,
+        `Rate: $${booking.pricePerNight} per night`,
+        `Total: $${booking.totalAmount}`,
+        `Demo transaction ID: ${booking.transactionId}`,
+        "",
+        "This receipt is a local demo record, not proof of a bank or card transaction."
+      ].join("\n");
+      const url = URL.createObjectURL(new Blob([receipt], { type: "text/plain;charset=utf-8" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `juniper-house-receipt-${booking.id.slice(0, 8)}.txt`;
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    const demoPattern = [
+      "11110100111", "10010110101", "10110100101", "10010111101", "11110101011",
+      "00000110100", "11011100111", "01001011010", "11100101101", "10011110010",
+      "10101001111", "10011010001", "11101110111"
+    ];
+    const qr = document.querySelector("#demo-qr");
+    for (const line of demoPattern) {
+      for (const pixel of line) {
+        const cell = document.createElement("span");
+        cell.className = pixel === "1" ? "qr-cell on" : "qr-cell";
+        qr.append(cell);
+      }
+    }
+    function refreshRoomFilters() {
+      const selectedType = document.querySelector("#room-type").value;
+      document.querySelectorAll(".category-pill").forEach(button => {
+        button.setAttribute("aria-pressed", String(button.dataset.roomType === selectedType));
+      });
+      renderRooms(loadedRooms);
+      const count = filteredRooms(loadedRooms).filter(room => room.available).length;
+      showMessage(roomMessage, `${count} room${count === 1 ? "" : "s"} match your stay and filters.`);
+    }
+
+    ["guest-count", "room-type", "max-price", "facility"].forEach(id => {
+      document.querySelector(`#${id}`).addEventListener("change", refreshRoomFilters);
+    });
+    document.querySelectorAll(".category-pill").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelector("#room-type").value = button.dataset.roomType;
+        refreshRoomFilters();
+      });
+    });
     loadRooms();
   </script>
 </body>

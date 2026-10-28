@@ -20,7 +20,7 @@ spec:
         fsGroup: 10001
       containers:
         - name: hotel-booking
-          image: hotel-booking-system:latest
+          image: hotel-booking-system:local
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

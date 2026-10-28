@@ -27,7 +27,27 @@ public final class HotelBookingApplication {
             new Room("101", "Garden Room", "Standard", 120, 2),
             new Room("102", "City View", "Deluxe", 180, 2),
             new Room("201", "Family Suite", "Suite", 280, 4),
-            new Room("202", "Twin Room", "Standard", 140, 2)
+            new Room("202", "Twin Room", "Standard", 140, 2),
+            new Room("103", "Courtyard Room", "Standard", 125, 2),
+            new Room("104", "Cozy King", "Standard", 130, 2),
+            new Room("105", "Patio Room", "Standard", 135, 2),
+            new Room("106", "Sunroom Standard", "Standard", 140, 2),
+            new Room("D103", "Balcony Deluxe", "Deluxe", 185, 2),
+            new Room("D104", "Corner Deluxe", "Deluxe", 190, 2),
+            new Room("D105", "Skyline Deluxe", "Deluxe", 195, 2),
+            new Room("D106", "Terrace Deluxe", "Deluxe", 200, 2),
+            new Room("D107", "Harbor Deluxe", "Deluxe", 210, 2),
+            new Room("S202", "Garden Suite", "Suite", 285, 4),
+            new Room("S203", "Penthouse Suite", "Suite", 300, 4),
+            new Room("S204", "Spa Suite", "Suite", 295, 4),
+            new Room("S205", "Sunset Suite", "Suite", 305, 4),
+            new Room("S206", "Grand Suite", "Suite", 310, 4),
+            new Room("F301", "Family Garden Room", "Family", 320, 6),
+            new Room("F302", "Bunkhouse Family Room", "Family", 325, 6),
+            new Room("F303", "Connecting Family Room", "Family", 340, 6),
+            new Room("F304", "Family Courtyard Room", "Family", 330, 6),
+            new Room("F305", "Family Balcony Room", "Family", 350, 6),
+            new Room("F306", "Grand Family Room", "Family", 360, 6)
     );
 
     private HotelBookingApplication() {
@@ -57,6 +77,9 @@ public final class HotelBookingApplication {
                 listBookings(exchange, store);
             } else if (path.equals("/api/bookings") && method.equals("POST")) {
                 createBooking(exchange, store);
+            } else if (path.startsWith("/api/bookings/") && path.endsWith("/extend")
+                    && method.equals("POST")) {
+                extendBooking(exchange, store, path);
             } else if (path.startsWith("/api/bookings/") && path.endsWith("/cancel")
                     && method.equals("POST")) {
                 cancelBooking(exchange, store, path);
@@ -126,6 +149,12 @@ public final class HotelBookingApplication {
         String roomId = required(form, "roomId", "Room");
         LocalDate checkIn = parseDate(form.get("checkIn"), "check-in");
         LocalDate checkOut = parseDate(form.get("checkOut"), "check-out");
+        int guests;
+        try {
+            guests = Integer.parseInt(required(form, "guests", "Guest count"));
+        } catch (NumberFormatException exception) {
+            throw new BadRequestException("Enter a valid guest count.");
+        }
 
         if (name.length() > 100 || email.length() > 254
                 || !email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
@@ -137,9 +166,12 @@ public final class HotelBookingApplication {
         }
         Room room = ROOMS.stream().filter(candidate -> candidate.id().equals(roomId))
                 .findFirst().orElseThrow(() -> new BadRequestException("Select a valid room."));
+        if (guests < 1 || guests > room.capacity()) {
+            throw new BadRequestException("The selected room cannot accommodate that many guests.");
+        }
 
         Booking booking = new Booking(UUID.randomUUID().toString(), name, email, room.id(),
-                room.name(), checkIn, checkOut);
+                room.name(), checkIn, checkOut, guests, demoTransactionId());
         store.create(booking);
         sendJson(exchange, 201, "{\"booking\":" + toJson(booking) + "}");
     }
@@ -154,8 +186,38 @@ public final class HotelBookingApplication {
         Map<String, String> form = parseForm(new String(exchange.getRequestBody().readAllBytes(),
                 StandardCharsets.UTF_8));
         String email = required(form, "email", "Email");
-        store.cancel(bookingId, email.trim());
-        sendJson(exchange, 200, "{\"message\":\"Booking cancelled.\"}");
+        Booking booking = store.cancel(bookingId, email.trim());
+        int amount = bookingAmount(booking);
+        sendJson(exchange, 200, "{\"message\":\"Booking cancelled.\",\"originalAmount\":"
+                + amount + ",\"cancellationFee\":" + (amount - amount / 2)
+                + ",\"refundedAmount\":" + amount / 2
+                + ",\"refundTransactionId\":" + jsonString(demoTransactionId()) + "}");
+    }
+
+    private static void extendBooking(HttpExchange exchange, BookingStore store, String path)
+            throws IOException {
+        String bookingId = path.substring("/api/bookings/".length(),
+                path.length() - "/extend".length());
+        if (bookingId.isBlank() || bookingId.contains("/")) {
+            throw new NotFoundException("Booking not found.");
+        }
+        Map<String, String> form = parseForm(new String(exchange.getRequestBody().readAllBytes(),
+                StandardCharsets.UTF_8));
+        String email = required(form, "email", "Email");
+        LocalDate newCheckOut = parseDate(form.get("checkOut"), "new check-out");
+        Booking previous = store.find(bookingId, email.trim());
+        if (!newCheckOut.isAfter(previous.checkOut())) {
+            throw new BadRequestException("The new check-out must be after your current check-out.");
+        }
+        validateDates(previous.checkIn(), newCheckOut);
+        BookingExtension extension = store.extend(bookingId, email.trim(), newCheckOut);
+        Booking updated = extension.booking();
+        Room room = roomForBooking(updated);
+        int additionalAmount = Math.toIntExact(
+                java.time.temporal.ChronoUnit.DAYS.between(extension.previousCheckOut(), newCheckOut)
+                        * room.pricePerNight());
+        sendJson(exchange, 200, "{\"booking\":" + toJson(updated)
+                + ",\"additionalAmount\":" + additionalAmount + "}");
     }
 
     private static void sendPage(HttpExchange exchange) throws IOException {
@@ -185,13 +247,39 @@ public final class HotelBookingApplication {
     }
 
     private static String toJson(Booking booking) {
+        Room room = roomForBooking(booking);
         return "{\"id\":" + jsonString(booking.id())
                 + ",\"name\":" + jsonString(booking.name())
                 + ",\"email\":" + jsonString(booking.email())
                 + ",\"roomId\":" + jsonString(booking.roomId())
                 + ",\"roomName\":" + jsonString(booking.roomName())
                 + ",\"checkIn\":" + jsonString(booking.checkIn().toString())
-                + ",\"checkOut\":" + jsonString(booking.checkOut().toString()) + "}";
+                + ",\"checkOut\":" + jsonString(booking.checkOut().toString())
+                + ",\"guests\":" + booking.guests()
+                + ",\"pricePerNight\":" + room.pricePerNight()
+                + ",\"totalAmount\":" + bookingAmount(booking)
+                + ",\"transactionId\":" + jsonString(booking.transactionId()) + "}";
+    }
+
+    private static String demoTransactionId() {
+        return "DEMO-" + UUID.randomUUID().toString().toUpperCase();
+    }
+
+    private static String legacyTransactionId(String bookingId) {
+        return "DEMO-" + UUID.nameUUIDFromBytes(bookingId.getBytes(StandardCharsets.UTF_8))
+                .toString().toUpperCase();
+    }
+
+    private static int bookingAmount(Booking booking) {
+        Room room = roomForBooking(booking);
+        return Math.toIntExact(java.time.temporal.ChronoUnit.DAYS.between(
+                booking.checkIn(), booking.checkOut()) * room.pricePerNight());
+    }
+
+    private static Room roomForBooking(Booking booking) {
+        return ROOMS.stream().filter(room -> room.id().equals(booking.roomId()))
+                .findFirst().orElseThrow(() -> new IllegalStateException(
+                        "Booking references unknown room " + booking.roomId()));
     }
 
     private static String jsonObject(String key, String value) {
@@ -275,7 +363,10 @@ public final class HotelBookingApplication {
     }
 
     private record Booking(String id, String name, String email, String roomId, String roomName,
-                           LocalDate checkIn, LocalDate checkOut) {
+                           LocalDate checkIn, LocalDate checkOut, int guests, String transactionId) {
+    }
+
+    private record BookingExtension(Booking booking, LocalDate previousCheckOut) {
     }
 
     private static final class BookingStore {
@@ -307,6 +398,14 @@ public final class HotelBookingApplication {
                     .toList();
         }
 
+        private synchronized Booking find(String id, String email) {
+            Booking booking = bookings.get(id);
+            if (booking == null || !booking.email().equalsIgnoreCase(email)) {
+                throw new NotFoundException("Booking not found for that email address.");
+            }
+            return booking;
+        }
+
         private synchronized void create(Booking booking) throws IOException {
             if (!isAvailable(booking.roomId(), booking.checkIn(), booking.checkOut())) {
                 throw new ConflictException("That room is no longer available for those dates.");
@@ -320,11 +419,8 @@ public final class HotelBookingApplication {
             }
         }
 
-        private synchronized void cancel(String id, String email) throws IOException {
-            Booking booking = bookings.get(id);
-            if (booking == null || !booking.email().equalsIgnoreCase(email)) {
-                throw new NotFoundException("Booking not found for that email address.");
-            }
+        private synchronized Booking cancel(String id, String email) throws IOException {
+            Booking booking = find(id, email);
             bookings.remove(id);
             try {
                 save();
@@ -332,6 +428,38 @@ public final class HotelBookingApplication {
                 bookings.put(id, booking);
                 throw exception;
             }
+            return booking;
+        }
+
+        private synchronized BookingExtension extend(String id, String email, LocalDate newCheckOut)
+                throws IOException {
+            Booking booking = find(id, email);
+            if (!newCheckOut.isAfter(booking.checkOut())) {
+                throw new BadRequestException("The new check-out must be after your current check-out.");
+            }
+            if (!isAvailableExcept(booking.roomId(), booking.checkOut(), newCheckOut, id)) {
+                throw new ConflictException("The room is not available for the extended dates.");
+            }
+            Booking updated = new Booking(booking.id(), booking.name(), booking.email(),
+                    booking.roomId(), booking.roomName(), booking.checkIn(), newCheckOut,
+                    booking.guests(), demoTransactionId());
+            bookings.put(id, updated);
+            try {
+                save();
+            } catch (IOException exception) {
+                bookings.put(id, booking);
+                throw exception;
+            }
+            return new BookingExtension(updated, booking.checkOut());
+        }
+
+        private boolean isAvailableExcept(String roomId, LocalDate checkIn, LocalDate checkOut,
+                                          String excludedBookingId) {
+            return bookings.values().stream()
+                    .filter(booking -> !booking.id().equals(excludedBookingId)
+                            && booking.roomId().equals(roomId))
+                    .noneMatch(booking -> checkIn.isBefore(booking.checkOut())
+                            && checkOut.isAfter(booking.checkIn()));
         }
 
         private void load() throws IOException {
@@ -339,14 +467,18 @@ public final class HotelBookingApplication {
             for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
                 lineNumber++;
                 String[] fields = line.split("\t", -1);
-                if (fields.length != 7) {
+                if (fields.length != 7 && fields.length != 8 && fields.length != 9) {
                     throw new IOException("Invalid booking data at line " + lineNumber + " in " + file);
                 }
                 try {
                     Booking booking = new Booking(decodeField(fields[0]), decodeField(fields[1]),
                             decodeField(fields[2]), decodeField(fields[3]), decodeField(fields[4]),
                             LocalDate.parse(decodeField(fields[5])),
-                            LocalDate.parse(decodeField(fields[6])));
+                            LocalDate.parse(decodeField(fields[6])),
+                            fields.length == 9 ? Integer.parseInt(decodeField(fields[7])) : 1,
+                            fields.length == 8 ? decodeField(fields[7])
+                                    : fields.length == 9 ? decodeField(fields[8])
+                                    : legacyTransactionId(decodeField(fields[0])));
                     bookings.put(booking.id(), booking);
                 } catch (IllegalArgumentException exception) {
                     throw new IOException("Invalid booking data at line " + lineNumber + " in " + file,
@@ -362,7 +494,9 @@ public final class HotelBookingApplication {
                 lines.add(String.join("\t", encodeField(booking.id()), encodeField(booking.name()),
                         encodeField(booking.email()), encodeField(booking.roomId()),
                         encodeField(booking.roomName()), encodeField(booking.checkIn().toString()),
-                        encodeField(booking.checkOut().toString())));
+                        encodeField(booking.checkOut().toString()),
+                        encodeField(Integer.toString(booking.guests())),
+                        encodeField(booking.transactionId())));
             }
             Files.write(temporary, lines, StandardCharsets.UTF_8);
             try {
