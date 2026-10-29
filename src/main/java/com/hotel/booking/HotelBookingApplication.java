@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 
 public final class HotelBookingApplication {
-    private static final List<Room> ROOMS = List.of(
+    static final List<Room> ROOMS = List.of(
             new Room("101", "Garden Room", "Standard", 120, 2),
             new Room("102", "City View", "Deluxe", 180, 2),
             new Room("201", "Family Suite", "Suite", 280, 4),
@@ -71,6 +71,8 @@ public final class HotelBookingApplication {
             String method = exchange.getRequestMethod();
             if (path.equals("/healthz") && method.equals("GET")) {
                 sendJson(exchange, 200, "{\"status\":\"ok\"}");
+            } else if (path.equals("/config.js") && method.equals("GET")) {
+                sendConfig(exchange);
             } else if (path.equals("/api/rooms") && method.equals("GET")) {
                 listRooms(exchange, store);
             } else if (path.equals("/api/bookings") && method.equals("GET")) {
@@ -237,6 +239,20 @@ public final class HotelBookingApplication {
         }
     }
 
+    private static void sendConfig(HttpExchange exchange) throws IOException {
+        try (var input = HotelBookingApplication.class.getResourceAsStream("/public/config.js")) {
+            if (input == null) {
+                sendJson(exchange, 500, "{\"error\":\"Application configuration is missing\"}");
+                return;
+            }
+            byte[] body = input.readAllBytes();
+            exchange.getResponseHeaders().set("Content-Type", "application/javascript; charset=utf-8");
+            exchange.getResponseHeaders().set("X-Content-Type-Options", "nosniff");
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+        }
+    }
+
     private static void sendJson(HttpExchange exchange, int status, String body) throws IOException {
         byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
@@ -246,7 +262,7 @@ public final class HotelBookingApplication {
         exchange.getResponseBody().write(bytes);
     }
 
-    private static String toJson(Booking booking) {
+    static String toJson(Booking booking) {
         Room room = roomForBooking(booking);
         return "{\"id\":" + jsonString(booking.id())
                 + ",\"name\":" + jsonString(booking.name())
@@ -261,7 +277,7 @@ public final class HotelBookingApplication {
                 + ",\"transactionId\":" + jsonString(booking.transactionId()) + "}";
     }
 
-    private static String demoTransactionId() {
+    static String demoTransactionId() {
         return "DEMO-" + UUID.randomUUID().toString().toUpperCase();
     }
 
@@ -270,23 +286,23 @@ public final class HotelBookingApplication {
                 .toString().toUpperCase();
     }
 
-    private static int bookingAmount(Booking booking) {
+    static int bookingAmount(Booking booking) {
         Room room = roomForBooking(booking);
         return Math.toIntExact(java.time.temporal.ChronoUnit.DAYS.between(
                 booking.checkIn(), booking.checkOut()) * room.pricePerNight());
     }
 
-    private static Room roomForBooking(Booking booking) {
+    static Room roomForBooking(Booking booking) {
         return ROOMS.stream().filter(room -> room.id().equals(booking.roomId()))
                 .findFirst().orElseThrow(() -> new IllegalStateException(
                         "Booking references unknown room " + booking.roomId()));
     }
 
-    private static String jsonObject(String key, String value) {
+    static String jsonObject(String key, String value) {
         return "{" + jsonString(key) + ":" + jsonString(value) + "}";
     }
 
-    private static String jsonString(String value) {
+    static String jsonString(String value) {
         StringBuilder escaped = new StringBuilder("\"");
         for (char character : value.toCharArray()) {
             switch (character) {
@@ -309,7 +325,7 @@ public final class HotelBookingApplication {
         return escaped.append('"').toString();
     }
 
-    private static String required(Map<String, String> form, String key, String label) {
+    static String required(Map<String, String> form, String key, String label) {
         String value = form.get(key);
         if (value == null || value.isBlank()) {
             throw new BadRequestException(label + " is required.");
@@ -317,7 +333,7 @@ public final class HotelBookingApplication {
         return value.trim();
     }
 
-    private static LocalDate parseDate(String value, String label) {
+    static LocalDate parseDate(String value, String label) {
         if (value == null || value.isBlank()) {
             throw new BadRequestException("Choose a " + label + " date.");
         }
@@ -328,7 +344,7 @@ public final class HotelBookingApplication {
         }
     }
 
-    private static void validateDates(LocalDate checkIn, LocalDate checkOut) {
+    static void validateDates(LocalDate checkIn, LocalDate checkOut) {
         if (!checkOut.isAfter(checkIn)) {
             throw new BadRequestException("Check-out must be after check-in.");
         }
@@ -337,7 +353,7 @@ public final class HotelBookingApplication {
         }
     }
 
-    private static Map<String, String> parseForm(String encoded) {
+    static Map<String, String> parseForm(String encoded) {
         Map<String, String> values = new LinkedHashMap<>();
         if (encoded == null || encoded.isEmpty()) {
             return values;
@@ -359,14 +375,14 @@ public final class HotelBookingApplication {
         }
     }
 
-    private record Room(String id, String name, String type, int pricePerNight, int capacity) {
+    record Room(String id, String name, String type, int pricePerNight, int capacity) {
     }
 
-    private record Booking(String id, String name, String email, String roomId, String roomName,
-                           LocalDate checkIn, LocalDate checkOut, int guests, String transactionId) {
+    record Booking(String id, String name, String email, String roomId, String roomName,
+                   LocalDate checkIn, LocalDate checkOut, int guests, String transactionId) {
     }
 
-    private record BookingExtension(Booking booking, LocalDate previousCheckOut) {
+    record BookingExtension(Booking booking, LocalDate previousCheckOut) {
     }
 
     private static final class BookingStore {
@@ -517,20 +533,26 @@ public final class HotelBookingApplication {
         }
     }
 
-    private static class BadRequestException extends RuntimeException {
-        private BadRequestException(String message) {
+    static class BadRequestException extends RuntimeException {
+        BadRequestException(String message) {
             super(message);
         }
     }
 
-    private static class NotFoundException extends RuntimeException {
-        private NotFoundException(String message) {
+    static class NotFoundException extends RuntimeException {
+        NotFoundException(String message) {
             super(message);
         }
     }
 
-    private static class ConflictException extends RuntimeException {
-        private ConflictException(String message) {
+    static class ConflictException extends RuntimeException {
+        ConflictException(String message) {
+            super(message);
+        }
+    }
+
+    static class UnauthorizedException extends RuntimeException {
+        UnauthorizedException(String message) {
             super(message);
         }
     }

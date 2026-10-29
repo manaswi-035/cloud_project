@@ -97,6 +97,10 @@
     .error { color: #a33f36; }
     .success { color: #287553; }
     .demo-note { background: #fff3d9; border: 1px solid #f0dba9; border-radius: 9px; color: #70552a; font-size: 12px; line-height: 1.5; margin-top: 15px; padding: 11px 13px; }
+    .auth-panel { display: grid; gap: 12px; margin-bottom: 18px; }
+    .auth-panel[hidden] { display: none; }
+    .auth-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+    .auth-actions { display: flex; flex-wrap: wrap; gap: 9px; }
     dialog { border: 0; border-radius: 18px; box-shadow: 0 24px 80px #102b2a66; color: var(--ink); max-height: 90vh; max-width: 500px; padding: 0; width: calc(100% - 30px); }
     dialog::backdrop { background: #102b2ab8; backdrop-filter: blur(3px); }
     .dialog-content { padding: 25px; }
@@ -141,6 +145,25 @@
     <div class="hero-note">✦ &nbsp;Your next lovely stay starts here</div>
   </section>
   <main>
+    <section class="panel auth-panel" id="auth-panel" aria-label="Guest account" hidden>
+      <div>
+        <div class="eyebrow">Manage your stay securely</div>
+        <h2>Guest account</h2>
+        <p class="muted">Create an account or sign in with your verified email to make and manage reservations.</p>
+      </div>
+      <div class="auth-grid">
+        <div><label for="auth-email">EMAIL</label><input id="auth-email" type="email" required autocomplete="email"></div>
+        <div><label for="auth-password">PASSWORD</label><input id="auth-password" type="password" required minlength="8" autocomplete="current-password"></div>
+        <div id="confirmation-field" hidden><label for="auth-code">EMAIL VERIFICATION CODE</label><input id="auth-code" inputmode="numeric" autocomplete="one-time-code"></div>
+      </div>
+      <div class="auth-actions">
+        <button class="primary" id="auth-signin" type="button">Sign in</button>
+        <button class="secondary" id="auth-signup" type="button">Create account</button>
+        <button class="primary" id="auth-confirm" type="button" hidden>Confirm email</button>
+        <button class="secondary" id="auth-signout" type="button" hidden>Sign out</button>
+      </div>
+      <p class="message" id="auth-message" role="status"></p>
+    </section>
     <section class="panel" aria-label="Search room availability">
       <form id="search-form" class="search-grid">
         <div><label for="check-in">CHECK IN</label><input id="check-in" name="checkIn" type="date" required></div>
@@ -203,6 +226,7 @@
       </div>
     </form>
   </dialog>
+  <script src="/config.js"></script>
   <script>
     const form = document.querySelector("#search-form");
     const checkIn = document.querySelector("#check-in");
@@ -213,6 +237,11 @@
     const bookingList = document.querySelector("#booking-list");
     const paymentDialog = document.querySelector("#payment-dialog");
     const paymentForm = document.querySelector("#payment-form");
+    const authConfig = window.HOTEL_AUTH_CONFIG || {};
+    const cloudAuthenticationEnabled = Boolean(authConfig.clientId && authConfig.region);
+    let idToken = "";
+    let authenticatedEmail = "";
+    let pendingConfirmationEmail = "";
     let loadedRooms = [];
     let selectedRoom;
     const today = new Date();
@@ -278,7 +307,9 @@
     async function request(url, options) {
       let response;
       try {
-        response = await fetch(url, options);
+        const headers = new Headers(options?.headers || {});
+        if (idToken) headers.set("Authorization", `Bearer ${idToken}`);
+        response = await fetch(`${window.HOTEL_API_BASE_URL || ""}${url}`, { ...options, headers });
       } catch (error) {
         if (error instanceof TypeError) {
           throw new Error("Can't reach the hotel server. Start the app, then refresh this page.");
@@ -289,6 +320,101 @@
       if (!response.ok) throw new Error(payload.error || "Something went wrong.");
       return payload;
     }
+
+    async function cognitoRequest(action, parameters) {
+      const response = await fetch(`https://cognito-idp.${authConfig.region}.amazonaws.com/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-amz-json-1.1",
+          "X-Amz-Target": `AWSCognitoIdentityProviderService.${action}`
+        },
+        body: JSON.stringify(parameters)
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Account request failed.");
+      return result;
+    }
+
+    function updateAuthentication(email = "") {
+      authenticatedEmail = email;
+      const signedIn = Boolean(idToken);
+      document.querySelector("#auth-signin").hidden = signedIn || Boolean(pendingConfirmationEmail);
+      document.querySelector("#auth-signup").hidden = signedIn || Boolean(pendingConfirmationEmail);
+      document.querySelector("#auth-confirm").hidden = signedIn || !pendingConfirmationEmail;
+      document.querySelector("#auth-signout").hidden = !signedIn;
+      document.querySelector("#confirmation-field").hidden = !pendingConfirmationEmail;
+      document.querySelector("#auth-email").readOnly = signedIn || Boolean(pendingConfirmationEmail);
+      document.querySelector("#auth-password").disabled = signedIn;
+      document.querySelector("#lookup-email").readOnly = cloudAuthenticationEnabled;
+      document.querySelector("#guest-email").readOnly = cloudAuthenticationEnabled;
+      document.querySelector("#lookup-email").value = authenticatedEmail;
+      document.querySelector("#guest-email").value = authenticatedEmail;
+      if (!signedIn && cloudAuthenticationEnabled) {
+        bookingList.replaceChildren();
+        showMessage(bookingMessage, "Sign in with your verified email to view or manage reservations.");
+      }
+    }
+
+    document.querySelector("#auth-signup").addEventListener("click", async () => {
+      const email = document.querySelector("#auth-email").value.trim();
+      const password = document.querySelector("#auth-password").value;
+      try {
+        await cognitoRequest("SignUp", {
+          ClientId: authConfig.clientId,
+          Username: email,
+          Password: password,
+          UserAttributes: [{ Name: "email", Value: email }]
+        });
+        pendingConfirmationEmail = email;
+        updateAuthentication();
+        showMessage(document.querySelector("#auth-message"), "Check your email for a verification code.");
+      } catch (error) {
+        showMessage(document.querySelector("#auth-message"), error.message, "error");
+      }
+    });
+
+    document.querySelector("#auth-confirm").addEventListener("click", async () => {
+      try {
+        await cognitoRequest("ConfirmSignUp", {
+          ClientId: authConfig.clientId,
+          Username: pendingConfirmationEmail,
+          ConfirmationCode: document.querySelector("#auth-code").value.trim()
+        });
+        document.querySelector("#auth-email").value = pendingConfirmationEmail;
+        pendingConfirmationEmail = "";
+        updateAuthentication();
+        showMessage(document.querySelector("#auth-message"), "Email verified. You can now sign in.", "success");
+      } catch (error) {
+        showMessage(document.querySelector("#auth-message"), error.message, "error");
+      }
+    });
+
+    document.querySelector("#auth-signin").addEventListener("click", async () => {
+      const email = document.querySelector("#auth-email").value.trim();
+      const password = document.querySelector("#auth-password").value;
+      try {
+        const result = await cognitoRequest("InitiateAuth", {
+          AuthFlow: "USER_PASSWORD_AUTH",
+          ClientId: authConfig.clientId,
+          AuthParameters: { USERNAME: email, PASSWORD: password }
+        });
+        if (!result.AuthenticationResult?.IdToken) throw new Error("Complete the account sign-in challenge before continuing.");
+        idToken = result.AuthenticationResult.IdToken;
+        updateAuthentication(email);
+        showMessage(document.querySelector("#auth-message"), `Signed in as ${email}.`, "success");
+      } catch (error) {
+        showMessage(document.querySelector("#auth-message"), error.message, "error");
+      }
+    });
+
+    document.querySelector("#auth-signout").addEventListener("click", () => {
+      idToken = "";
+      document.querySelector("#auth-password").value = "";
+      updateAuthentication();
+      showMessage(document.querySelector("#auth-message"), "You are signed out.");
+    });
+    document.querySelector("#auth-panel").hidden = !cloudAuthenticationEnabled;
+    updateAuthentication();
 
     function nightCount(start, end) {
       return Math.round((new Date(`${end}T00:00:00`) - new Date(`${start}T00:00:00`)) / 86400000);
@@ -349,6 +475,11 @@
     }
 
     function bookRoom(room) {
+      if (cloudAuthenticationEnabled && !idToken) {
+        showMessage(roomMessage, "Sign in with your verified email before making a reservation.", "error");
+        document.querySelector("#auth-panel").scrollIntoView({ behavior: "smooth" });
+        return;
+      }
       selectedRoom = room;
       const nights = nightCount(checkIn.value, checkOut.value);
       document.querySelector("#payment-details").textContent = `${room.name} · ${document.querySelector("#guest-count").value} guest(s) · ${nights} night${nights === 1 ? "" : "s"} · ${checkIn.value} to ${checkOut.value}`;
@@ -370,7 +501,7 @@
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({
             name: values.get("name").trim(),
-            email: values.get("email").trim(),
+            email: cloudAuthenticationEnabled ? authenticatedEmail : values.get("email").trim(),
             roomId: selectedRoom.id,
             guests: document.querySelector("#guest-count").value,
             checkIn: checkIn.value,
@@ -379,7 +510,8 @@
         });
         paymentDialog.close();
         showMessage(roomMessage, `Demo booking confirmed · $${result.booking.totalAmount} simulated debit · Reference ${result.booking.id.slice(0, 8)}. No money moved.`, "success");
-        document.querySelector("#lookup-email").value = values.get("email").trim();
+        document.querySelector("#lookup-email").value = cloudAuthenticationEnabled
+          ? authenticatedEmail : values.get("email").trim();
         document.querySelector("#booking-search").requestSubmit();
         await loadRooms();
       } catch (error) {
@@ -410,6 +542,11 @@
 
     document.querySelector("#booking-search").addEventListener("submit", async event => {
       event.preventDefault();
+      if (cloudAuthenticationEnabled && !idToken) {
+        showMessage(bookingMessage, "Sign in with your verified email to access reservations.", "error");
+        document.querySelector("#auth-panel").scrollIntoView({ behavior: "smooth" });
+        return;
+      }
       const email = document.querySelector("#lookup-email").value.trim();
       bookingList.replaceChildren();
       showMessage(bookingMessage, "Looking up your reservation…");
